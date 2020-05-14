@@ -501,7 +501,7 @@ ScriptsOnlyBuild:
     className: DownloadableSample
   - hash:
       serializedVersion: 2
-      Hash: 71beacbcd68ac1efbfa042a188ab6e7c
+      Hash: bf1681549f23afcbe98d9c2f6d9bc3e4
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ClientScript

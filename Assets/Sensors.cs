@@ -39,8 +39,11 @@ public class Sensors : MonoBehaviour
     {
         IPAddress localAddr = IPAddress.Parse(ClientScript.GetLocalIPAddress());
         ownIp = localAddr.ToString();
+    }
 
-        try
+    void Update()
+    {
+        if (ClientScript.isConnected == true && firstTime == true)
         {
             InputSystem.EnableDevice(UnityEngine.InputSystem.Gyroscope.current);
             Debug.Log("Done");
@@ -55,19 +58,16 @@ public class Sensors : MonoBehaviour
             //InputSystem.EnableDevice(AmbientTemperatureSensor.current);
             //Debug.Log("Done");
 
-            UnityEngine.InputSystem.Gyroscope.current.samplingFrequency = 16;
+            UnityEngine.InputSystem.Gyroscope.current.samplingFrequency = 64;
             //MagneticFieldSensor.current.samplingFrequency = 16;
             //ProximitySensor.current.samplingFrequency = 16;
-            LightSensor.current.samplingFrequency = 16;
+            LightSensor.current.samplingFrequency = 64;
             //HumiditySensor.current.samplingFrequency = 16;
             //AmbientTemperatureSensor.current.samplingFrequency = 16;
+            firstTime = false;
         }
-        catch (Exception e){ Debug.Log("Exception in Sensors: " + e); }
-    }
 
-    void Update()
-    {
-        if (SceneChangerScript.state == "Client")
+        if (SceneChangerScript.state == "Client" && firstTime == false && ClientScript.isConnected == true)
         {
             btrStr = (SystemInfo.batteryLevel * 100).ToString();
             battery.GetComponent<Text>().text = btrStr;
@@ -77,7 +77,7 @@ public class Sensors : MonoBehaviour
             //magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.y.ReadValue()).ToString("0.#####") + " ";
             //magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.z.ReadValue()).ToString("0.#####") + " ";
 
-            gyroStr = Math.Pow(Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.x.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.y.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.z.ReadValue(), 2), 0.5f).ToString("0.#") + " ";
+            gyroStr = Math.Pow(Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.x.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.y.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.z.ReadValue(), 2), 0.5f).ToString("#") + " ";
             //gyroStr = gyroStr + (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.y.ReadValue()).ToString("0.#####") + " ";
             //gyroStr = gyroStr + (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.z.ReadValue()).ToString("0.#####") + " ";
             gyro.GetComponent<Text>().text = gyroStr;

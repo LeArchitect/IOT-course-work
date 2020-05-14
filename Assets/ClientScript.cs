@@ -14,7 +14,7 @@ public class ClientScript : MonoBehaviour
     public int port = 5005;
     public string serverIp;
 
-    public bool isConnected = false;
+    public static bool isConnected = false;
 
     public static GameObject ipField = null;
 
@@ -72,7 +72,7 @@ public class ClientScript : MonoBehaviour
                 isConnected = true;
             }
             catch (SocketException e){Debug.Log("SocketException: " + e);}
-            Thread.Sleep(1);
+            //Thread.Sleep(100);
         }
         Debug.Log("Connection to The server Established!");
     }
@@ -89,7 +89,7 @@ public class ClientScript : MonoBehaviour
             {
                 if (toSendQueue.Count > 0)
                 {
-                    Thread.Sleep(10);
+                    //Thread.Sleep(1);
                     Debug.Log("TosendObject: " + toSendQueue[0]);
                     Byte[] data = Encoding.ASCII.GetBytes(toSendQueue[0]);
                     // Send the message to the connected TcpServer. 
