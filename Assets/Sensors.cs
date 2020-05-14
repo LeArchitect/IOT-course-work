@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -24,9 +25,16 @@ public class Sensors : MonoBehaviour
 
     public int counter = 0;
 
-    public string btrStr;
     public string ownIp;
- 
+
+    public string btrStr;
+    public string lightStr;
+    public string humStr;
+    public string tempStr;
+    public string gyroStr;
+    public string magneticStr;
+    public string proxyStr;
+
     void Start()
     {
         IPAddress localAddr = IPAddress.Parse(ClientScript.GetLocalIPAddress());
@@ -63,20 +71,20 @@ public class Sensors : MonoBehaviour
         {
             btrStr = (SystemInfo.batteryLevel * 100).ToString();
 
-            string magneticStr = (MagneticFieldSensor.current.magneticField.x.ReadValue()).ToString("0.#####") + " ";
-            magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.y.ReadValue()).ToString("0.#####") + " ";
-            magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.z.ReadValue()).ToString("0.#####") + " ";
+            magneticStr = Math.Pow(Math.Pow(MagneticFieldSensor.current.magneticField.x.ReadValue(), 2) + Math.Pow(MagneticFieldSensor.current.magneticField.y.ReadValue(), 2) + Math.Pow(MagneticFieldSensor.current.magneticField.z.ReadValue(), 2), 0.5f).ToString("0.#") + " ";
+            //magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.y.ReadValue()).ToString("0.#####") + " ";
+            //magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.z.ReadValue()).ToString("0.#####") + " ";
 
-            string gyroStr = (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.x.ReadValue()).ToString("0.#####") + " ";
+            gyroStr = (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.x.ReadValue()).ToString("0.#####") + " ";
             gyroStr = gyroStr + (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.y.ReadValue()).ToString("0.#####") + " ";
             gyroStr = gyroStr + (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.z.ReadValue()).ToString("0.#####") + " ";
 
-            string proxyStr = (ProximitySensor.current.distance.ReadValue()).ToString("0.#####");
-            string lightStr = (LightSensor.current.lightLevel.ReadValue()).ToString("0.#####");
+            proxyStr = (ProximitySensor.current.distance.ReadValue()).ToString("0.#####");
+            lightStr = (LightSensor.current.lightLevel.ReadValue()).ToString("0.#####");
 
             System.Random rnd = new System.Random();
-            string tempStr = rnd.Next(22, 25).ToString();
-            string humStr = rnd.Next(50, 55).ToString();
+            tempStr = rnd.Next(22, 25).ToString();
+            humStr = rnd.Next(50, 55).ToString();
             //string tempStr = (AmbientTemperatureSensor.current.ambientTemperature.ReadValue()).ToString("0.##");
             //string humStr = (HumiditySensor.current.relativeHumidity.ReadValue()).ToString("0.##");
 
@@ -85,17 +93,18 @@ public class Sensors : MonoBehaviour
                 battery.GetComponent<Text>().text = btrStr;
                 ClientScript.toSendQueue.Add(ownIp + ":B:" + btrStr);
 
+
                 gyro.GetComponent<Text>().text = gyroStr;
                 ClientScript.toSendQueue.Add(ownIp + ":G:" + gyroStr);
 
-                proxy.GetComponent<Text>().text = proxyStr;
-                ClientScript.toSendQueue.Add(ownIp + ":P:" + proxyStr);
+                //proxy.GetComponent<Text>().text = proxyStr;
+                //ClientScript.toSendQueue.Add(ownIp + ":P:" + proxyStr);
 
                 lumi.GetComponent<Text>().text = lightStr;
                 ClientScript.toSendQueue.Add(ownIp + ":L:" + lightStr);
 
-                magnetic.GetComponent<Text>().text = magneticStr;
-                ClientScript.toSendQueue.Add(ownIp + ":M:" + magneticStr);
+                //magnetic.GetComponent<Text>().text = magneticStr;
+                //ClientScript.toSendQueue.Add(ownIp + ":M:" + magneticStr);
 
                 humidity.GetComponent<Text>().text = humStr;
                 ClientScript.toSendQueue.Add(ownIp + ":H:" + humStr);

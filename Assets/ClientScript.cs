@@ -31,7 +31,7 @@ public class ClientScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
+        
         if (SceneChangerScript.state == "Client")
         {
             try
@@ -55,7 +55,7 @@ public class ClientScript : MonoBehaviour
                 catch (Exception e) {Debug.Log("SocketException: " + e);}
             }
         }
-        */
+        
     }
     public void ConnectToHost()
     {
@@ -89,6 +89,7 @@ public class ClientScript : MonoBehaviour
             {
                 if (toSendQueue.Count > 0)
                 {
+                    Thread.Sleep(100);
                     Debug.Log("TosendObject: " + toSendQueue[0]);
                     Byte[] data = Encoding.ASCII.GetBytes(toSendQueue[0]);
                     // Send the message to the connected TcpServer. 
@@ -107,7 +108,6 @@ public class ClientScript : MonoBehaviour
             {
                 Debug.Log("Exception: " + e);
             }
-            Thread.Sleep(10);
         }
     }
 

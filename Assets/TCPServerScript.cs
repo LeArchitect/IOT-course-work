@@ -99,7 +99,7 @@ public class TCPServerScript : MonoBehaviour
         client.NoDelay = false;
 
         string data = null;
-        Byte[] bytes = new Byte[32];
+        Byte[] bytes = new Byte[16];
         int i;
 
         //Thread sendThread = new Thread(() => SendThread(client, stream));
@@ -115,10 +115,11 @@ public class TCPServerScript : MonoBehaviour
         {
             try
             {
-                bytes = new Byte[32];
                 string hex = BitConverter.ToString(bytes);
                 data = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+                Debug.Log(data);
                 messageQueue.Add(data);
+                bytes = new Byte[16];
             }
             catch (SocketException e)
             {
@@ -129,7 +130,6 @@ public class TCPServerScript : MonoBehaviour
             {
                 Debug.Log("Exception: " + e);
             }
-            Thread.Sleep(1);
         }
     }
     /*
