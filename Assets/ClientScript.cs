@@ -31,8 +31,8 @@ public class ClientScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        if (SceneChangerScript.state == "Client")
+
+        if (SceneChangerScript.state == "Client" && SceneChangerScript.sensormode == false)
         {
             try
             {
@@ -89,7 +89,7 @@ public class ClientScript : MonoBehaviour
             {
                 if (toSendQueue.Count > 0)
                 {
-                    Thread.Sleep(100);
+                    Thread.Sleep(10);
                     Debug.Log("TosendObject: " + toSendQueue[0]);
                     Byte[] data = Encoding.ASCII.GetBytes(toSendQueue[0]);
                     // Send the message to the connected TcpServer. 

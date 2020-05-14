@@ -10,6 +10,7 @@ public class SceneChangerScript : MonoBehaviour
 {
     public static string state = null;
     public bool isServer;
+    public static bool sensormode = false; 
 
     public GameObject menu;
     public GameObject clientConnect;
@@ -120,5 +121,9 @@ public class SceneChangerScript : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+    public void ToSensormode()
+    {
+        sensormode = true;
     }
 }
