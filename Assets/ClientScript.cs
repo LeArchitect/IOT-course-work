@@ -11,13 +11,13 @@ using UnityEngine.UI;
 public class ClientScript : MonoBehaviour
 {
     [SerializeField]
-    public int port = 5033;
+    public int port = 5005;
     public string ownIp;
     public string serverIp;
 
     public bool isConnected = false;
 
-    public GameObject ipField = null;
+    public static GameObject ipField = null;
 
     public TcpClient client;
 
@@ -27,39 +27,36 @@ public class ClientScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ipField = GameObject.Find("Menu").transform.Find("IPField").gameObject;
-        IPAddress localAddr = IPAddress.Parse(GetLocalIPAddress());
-        ownIp = localAddr.ToString();
-        Debug.Log("Program Started...!");
     }
 
     // Update is called once per frame
     void Update()
     {
-        try
-        {
-            serverIp = ipField.transform.Find("Text").gameObject.GetComponent<Text>().text;
-        }
-        catch (Exception e)
-        {
-
-        }
-        if (isConnected == false)
+        /*
+        if (SceneChangerScript.state == "Client")
         {
             try
             {
-                Debug.Log("Waiting Connection To the Server...");
-                client = new TcpClient(serverIp, port);
-                NetworkStream stream = client.GetStream();
-                Thread clientThread = new Thread(() => ClientSend(client));
-                clientThread.Start();
-                isConnected = true;
+                serverIp = ipField.transform.Find("Text").gameObject.GetComponent<Text>().text;
+                Debug.Log(serverIp);
             }
-            catch (SocketException e)
+            catch (Exception e){ Debug.Log(serverIp); }
+
+            if (isConnected == false)
             {
-                Debug.Log("SocketException: " + e);
+                try
+                {
+                    Debug.Log("Waiting Connection To the Server...");
+                    client = new TcpClient(serverIp, port);
+                    NetworkStream stream = client.GetStream();
+                    Thread clientThread = new Thread(() => ClientSend(client));
+                    clientThread.Start();
+                    isConnected = true;
+                }
+                catch (Exception e) {Debug.Log("SocketException: " + e);}
             }
         }
+        */
     }
     public void ConnectToHost()
     {
@@ -67,6 +64,7 @@ public class ClientScript : MonoBehaviour
         {
             try
             {
+                serverIp = ipField.transform.Find("Text").gameObject.GetComponent<Text>().text;
                 Debug.Log("Waiting Connection To the Server...");
                 client = new TcpClient(serverIp, port);
                 NetworkStream stream = client.GetStream();
@@ -74,10 +72,7 @@ public class ClientScript : MonoBehaviour
                 clientThread.Start();
                 isConnected = true;
             }
-            catch (SocketException e)
-            {
-                Debug.Log("SocketException: " + e);
-            }
+            catch (SocketException e){Debug.Log("SocketException: " + e);}
             Thread.Sleep(1);
         }
         Debug.Log("Connection to The server Established!");
@@ -135,7 +130,11 @@ public class ClientScript : MonoBehaviour
 
     public void OpenConnection()
     {
+        IPAddress localAddr = IPAddress.Parse(GetLocalIPAddress());
+        ownIp = localAddr.ToString();
+
         Thread clientThread = new Thread(() => ConnectToHost());
         clientThread.Start();
+        Debug.Log("Program Started...!");
     }
 }

@@ -9,41 +9,32 @@ using UnityEngine.UI;
 public class Sensors : MonoBehaviour
 {
     //public GameObject battery;
-    public static GameObject gyro;
+    public static GameObject DataTexts;
     public static GameObject battery;
-    public static GameObject proxy;
     public static GameObject lumi;
+    public static GameObject humidity;
+    public static GameObject temperature;
+    public static GameObject gyro;
+
     public static GameObject magnetic;
+    public static GameObject proxy;
 
     public string prevGyroStr = "0";
     public string prevProxyStr = "0";
     public string prevLightStr = "0";
     public string prevMagneticStr = "0";
+    public string prevHumidityStr = "0";
+    public string prevTemperatureStr = "0";
 
     public int counter = 0;
 
-    public float btrLvl;
-
-    void Start()
-    {
-        InputSystem.EnableDevice(UnityEngine.InputSystem.Gyroscope.current);
-        InputSystem.EnableDevice(MagneticFieldSensor.current);
-        InputSystem.EnableDevice(ProximitySensor.current);
-        InputSystem.EnableDevice(LightSensor.current);
-
-        UnityEngine.InputSystem.Gyroscope.current.samplingFrequency = 16;
-        MagneticFieldSensor.current.samplingFrequency = 16;
-        ProximitySensor.current.samplingFrequency = 16;
-        LightSensor.current.samplingFrequency = 16;
-    }
-
-    // Update is called once per frame
+    public string btrStr;
  
     void Update()
     {
         if (SceneChangerScript.state == "Client")
         {
-            btrLvl = SystemInfo.batteryLevel;
+            btrStr = (SystemInfo.batteryLevel * 100).ToString();
 
             string magneticStr = (MagneticFieldSensor.current.magneticField.x.ReadValue()).ToString("0.#####") + " ";
             magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.y.ReadValue()).ToString("0.#####") + " ";
@@ -55,8 +46,11 @@ public class Sensors : MonoBehaviour
 
             string proxyStr = (ProximitySensor.current.distance.ReadValue()).ToString("0.#####");
             string lightStr = (LightSensor.current.lightLevel.ReadValue()).ToString("0.#####");
+            string tempStr = (AmbientTemperatureSensor.current.ambientTemperature.ReadValue()).ToString("0.##");
+            string humStr = (HumiditySensor.current.relativeHumidity.ReadValue()).ToString("0.##");
 
-            battery.GetComponent<Text>().text = btrLvl.ToString();
+            battery.GetComponent<Text>().text = btrStr;
+            ClientScript.toSendQueue.Add("B:" + btrStr);
 
             gyro.GetComponent<Text>().text = gyroStr;
             ClientScript.toSendQueue.Add("G:" + gyroStr);
@@ -69,6 +63,29 @@ public class Sensors : MonoBehaviour
 
             magnetic.GetComponent<Text>().text = magneticStr;
             ClientScript.toSendQueue.Add("M:" + magneticStr);
+
+            humidity.GetComponent<Text>().text = humStr;
+            ClientScript.toSendQueue.Add("H:" + humStr);
+
+            temperature.GetComponent<Text>().text = tempStr;
+            ClientScript.toSendQueue.Add("T:" + tempStr);
         }
+    }
+
+    public void InitSensors()
+    {
+        InputSystem.EnableDevice(UnityEngine.InputSystem.Gyroscope.current);
+        InputSystem.EnableDevice(MagneticFieldSensor.current);
+        InputSystem.EnableDevice(ProximitySensor.current);
+        InputSystem.EnableDevice(LightSensor.current);
+        InputSystem.EnableDevice(HumiditySensor.current);
+        InputSystem.EnableDevice(AmbientTemperatureSensor.current);
+
+        UnityEngine.InputSystem.Gyroscope.current.samplingFrequency = 16;
+        MagneticFieldSensor.current.samplingFrequency = 16;
+        ProximitySensor.current.samplingFrequency = 16;
+        LightSensor.current.samplingFrequency = 16;
+        HumiditySensor.current.samplingFrequency = 16;
+        AmbientTemperatureSensor.current.samplingFrequency = 16;
     }
 }

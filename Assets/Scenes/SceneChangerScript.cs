@@ -11,108 +11,99 @@ public class SceneChangerScript : MonoBehaviour
     public bool isServer;
 
     private GameObject menu;
+    private GameObject clientConnect;
     private GameObject client;
     private GameObject server;
 
-    public static GameObject description1;
-    public static GameObject gyro1;
-    public static GameObject proxy1;
+    public static GameObject description;
+    public static GameObject dataText0;
+    public static GameObject dataText1;
+
+    public static GameObject battery1;
     public static GameObject light1;
-    public static GameObject magnetic1;
+    public static GameObject humidity1;
+    public static GameObject temperature1;
+    public static GameObject gyro1;
 
-    public static GameObject description2;
-    public static GameObject gyro2;
-    public static GameObject proxy2;
+    public static GameObject battery2;
     public static GameObject light2;
-    public static GameObject magnetic2;
-
-    public GameObject description11;
-    public GameObject gyro11;
-    public GameObject proxy11;
-    public GameObject light11;
-    public GameObject magnetic11;
-
-    public GameObject description22;
-    public GameObject gyro22;
-    public GameObject proxy22;
-    public GameObject light22;
-    public GameObject magnetic22;
+    public static GameObject humidity2;
+    public static GameObject temperature2;
+    public static GameObject gyro2;
 
     // Start is called before the first frame update
     void Start()
     {
         menu = GameObject.Find("Menu");
+        clientConnect = GameObject.Find("ClientConnect");
         client = GameObject.Find("Client");
         server = GameObject.Find("Server");
 
         try
         {
+            ClientScript.ipField = GameObject.Find("ClientConnect").transform.Find("IPField").gameObject;
             Sensors.battery = GameObject.Find("Client").transform.Find("Battery").gameObject;
-            Sensors.gyro = GameObject.Find("Client").transform.Find("Gyro").gameObject;
-            Sensors.proxy = GameObject.Find("Client").transform.Find("Proxy").gameObject;
-            Sensors.magnetic = GameObject.Find("Client").transform.Find("Magnetic").gameObject;
-            Sensors.lumi = GameObject.Find("Client").transform.Find("Light").gameObject;
+            Sensors.DataTexts = GameObject.Find("Client").transform.Find("DataTexts").gameObject;
+            Sensors.gyro = Sensors.DataTexts.transform.Find("Gyro").gameObject;
+            Sensors.proxy = Sensors.DataTexts.transform.Find("Proxy").gameObject;
+            Sensors.magnetic = Sensors.DataTexts.transform.Find("Magnetic").gameObject;
+            Sensors.lumi = Sensors.DataTexts.transform.Find("Light").gameObject;
+            Sensors.humidity = Sensors.DataTexts.transform.Find("Humidity").gameObject;
+            Sensors.temperature = Sensors.DataTexts.transform.Find("Temperature").gameObject;
         }
-        catch(Exception e)
-        {
-
-        }
+        catch(Exception e){ Debug.Log("Exception in Sensor texts: " + e); }
 
         try
         {
-            description1 = GameObject.Find("Server").transform.Find("Description1").gameObject;
-            description2 = GameObject.Find("Server").transform.Find("Description2").gameObject;
-            gyro1 = description1.transform.Find("Gyro").gameObject;
-            gyro2 = description2.transform.Find("Gyro").gameObject;
-            proxy1 = description1.transform.Find("Proxy").gameObject;
-            proxy2 = description2.transform.Find("Proxy").gameObject;
-            light1 = description1.transform.Find("Light").gameObject;
-            light2 = description2.transform.Find("Light").gameObject;
-            magnetic1 = description1.transform.Find("Magnetic").gameObject;
-            magnetic2 = description2.transform.Find("Magnetic").gameObject;
+            description = GameObject.Find("Server").transform.Find("Description").gameObject;
+            dataText0 = description.transform.Find("DataText0").gameObject;
+            dataText1 = description.transform.Find("DataText1").gameObject;
 
-            description11 = description1;
-            description22 = description2;
-            gyro11 = gyro1;
-            gyro22 = gyro2;
-            proxy11 = proxy1;
-            proxy22 = proxy2;
-            light11 = light1;
-            light22 = light2;
-            magnetic11 = magnetic1;
-            magnetic22 = magnetic2;
+            battery1 = dataText0.transform.Find("Battery").gameObject;
+            battery2 = dataText1.transform.Find("Proxy").gameObject;
+            light1 = dataText0.transform.Find("Light").gameObject;
+            light2 = dataText1.transform.Find("Light").gameObject;
+            humidity1 = dataText0.transform.Find("Humidity").gameObject;
+            humidity2 = dataText1.transform.Find("Humidity").gameObject;
+            gyro1 = dataText0.transform.Find("Gyro").gameObject;
+            gyro2 = dataText1.transform.Find("Gyro").gameObject;
         }
-        catch (Exception e)
-        {
-
-        }
+        catch (Exception e){ Debug.Log("Exception in Sensor texts Server: " + e); }
         ToMenu();
     }
 
     public void ToClient()
     {
-        menu.SetActive(false);
         client.SetActive(true);
+        clientConnect.SetActive(false);
+        menu.SetActive(false);
+        server.SetActive(false);
         state = "Client";
     }
-
+    public void ToClientConnect()
+    {
+        clientConnect.SetActive(true);
+        menu.SetActive(false);
+        server.SetActive(false);
+        client.SetActive(false);
+        state = "ClientConnect";
+    }
     public void ToServer()
     {
-        menu.SetActive(false);
         server.SetActive(true);
+        menu.SetActive(false);
+        clientConnect.SetActive(false);
+        client.SetActive(false);
         state = "Server";
     }
-
     public void ToMenu()
     {
         menu.SetActive(true);
-        if(state == "Server")
-            server.SetActive(false);
-        else if(state == "Client")
-            client.SetActive(false);
+        server.SetActive(false);
+        clientConnect.SetActive(false);
+        client.SetActive(false);
         state = "Menu";
     }
-
     public void QuitGame()
     {
         Application.Quit();

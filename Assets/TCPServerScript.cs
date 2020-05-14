@@ -13,7 +13,7 @@ using System.Security.Cryptography;
 public class TCPServerScript : MonoBehaviour
 {
     [SerializeField]
-    public int port = 5033;
+    public int port = 5005;
     public string ownIp;
 
     public static bool isSending = false;
@@ -28,17 +28,7 @@ public class TCPServerScript : MonoBehaviour
     public List<string> messageQueue = new List<string>();
 
     //ID Gyro Proxy Light Magnetic//
-    public static List<Tuple<string, string, string, string, string>> valueList = new List<Tuple<string, string, string, string, string>>();
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        Thread masterThread = new Thread(()=>MasterThread());
-        masterThread.Priority = System.Threading.ThreadPriority.Highest;
-        Debug.Log("Program Started...!");
-        masterThread.Start();
-        Debug.Log("Master Thread Started...!");
-    }
+    public static List<Tuple<string, string, string, string, string, string>> valueList = new List<Tuple<string, string, string, string, string, string>>();
 
     // Update is called once per frame
     void Update()
@@ -48,6 +38,15 @@ public class TCPServerScript : MonoBehaviour
             Debug.Log("MessageQueue size:  " + messageQueue.Count);
             ReadQueue();
         }
+    }
+
+    public void InitMasterThread()
+    {
+        Thread masterThread = new Thread(() => MasterThread());
+        masterThread.Priority = System.Threading.ThreadPriority.Highest;
+        Debug.Log("Program Started...!");
+        masterThread.Start();
+        Debug.Log("Master Thread Started...!");
     }
 
     // One Thread to rule them all //
@@ -109,9 +108,9 @@ public class TCPServerScript : MonoBehaviour
         string clientIP = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
         Debug.Log(clientIP);
 
-        Tuple<string, string, string, string, string> value = new Tuple<string, string, string, string, string>(clientIP, "N/A", "N/A", "N/A", "N/A");
+        Tuple<string, string, string, string, string, string> value = new Tuple<string, string, string, string, string, string>(clientIP, "N/A", "N/A", "N/A", "N/A", "N/A");
         valueList.Add(value);
-        Debug.Log("Empty To ValueList: " + valueList[0].Item1 + " " + valueList[0].Item2 + " " + valueList[0].Item3 + " " + valueList[0].Item4 + " " + valueList[0].Item5);
+        Debug.Log("Empty To ValueList: " + valueList[0].Item1 + " " + valueList[0].Item2 + " " + valueList[0].Item3 + " " + valueList[0].Item4 + " " + valueList[0].Item5 + " " + valueList[0].Item6);
         while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
         {
             try
@@ -209,65 +208,74 @@ public class TCPServerScript : MonoBehaviour
             string[] splitter = new string[] { ":" };
             string[] message = messageQueue[0].Split(splitter, StringSplitOptions.RemoveEmptyEntries);
             messageQueue.RemoveAt(0);
-            Debug.Log("ValueList: " + valueList[0].Item1 + " " + valueList[0].Item2 + " " + valueList[0].Item3 + " " + valueList[0].Item4 + " " + valueList[0].Item5);
-            for (int i = 0; i <= valueList.Count - 1; i++)
+            Debug.Log("ValueList: " + valueList[0].Item1 + " " + valueList[0].Item2 + " " + valueList[0].Item3 + " " + valueList[0].Item4 + " " + valueList[0].Item5 + " " + valueList[0].Item6);
+            int i;
+            for (i = 0; i <= valueList.Count - 1; i++)
             {
-                Debug.Log("ValueList: " + valueList[0].Item1 + " " + valueList[0].Item2 + " " + valueList[0].Item3 + " " + valueList[0].Item4 + " " + valueList[0].Item5);
-                Debug.Log("ID of value: " + valueList[i].Item1);
+                Debug.Log("ValueList: " + valueList[0].Item1 + " " + valueList[0].Item2 + " " + valueList[0].Item3 + " " + valueList[0].Item4 + " " + valueList[0].Item5 + " " + valueList[0].Item6);
                 if (valueList[i].Item1 == message[0])
                 {
-                    if (message[1] == "G")
+                    if (message[1] == "B")
                     {
-                        Tuple<string, string, string, string, string> newValue = new Tuple<string, string, string, string, string>(valueList[i].Item1, message[2], valueList[i].Item3, valueList[i].Item4, valueList[i].Item5);
+                        Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, message[2], valueList[i].Item3, valueList[i].Item4, valueList[i].Item5, valueList[0].Item6);
                         valueList.Insert(i, newValue);
                         ShowChanges(i, newValue);
-                        Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5);
-                    }
-                    else if (message[1] == "P")
-                    {
-                        Tuple<string, string, string, string, string> newValue = new Tuple<string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, message[2], valueList[i].Item4, valueList[i].Item5);
-                        valueList.Insert(i, newValue);
-                        ShowChanges(i, newValue);
-                        Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5);
+                        Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
                     }
                     else if (message[1] == "L")
                     {
-                        Tuple<string, string, string, string, string> newValue = new Tuple<string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, valueList[i].Item3, message[2], valueList[i].Item5);
+                        Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, message[2], valueList[i].Item4, valueList[i].Item5, valueList[0].Item6);
                         valueList.Insert(i, newValue);
                         ShowChanges(i, newValue);
-                        Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5);
+                        Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
                     }
-                    else if (message[1] == "M")
+                    else if (message[1] == "H")
                     {
-                        Tuple<string, string, string, string, string> newValue = new Tuple<string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, valueList[i].Item3, valueList[i].Item4, message[2]);
+                        Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, valueList[i].Item3, message[2], valueList[i].Item5, valueList[0].Item6);
                         valueList.Insert(i, newValue);
                         ShowChanges(i, newValue);
-                        Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5);
+                        Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
+                    }
+                    else if (message[1] == "T")
+                    {
+                        Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, valueList[i].Item3, valueList[i].Item4, message[2], valueList[0].Item6);
+                        valueList.Insert(i, newValue);
+                        ShowChanges(i, newValue);
+                        Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
+                    }
+                    else if (message[1] == "G")
+                    {
+                        Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, valueList[i].Item3, valueList[i].Item4, valueList[i].Item5, message[2]);
+                        valueList.Insert(i, newValue);
+                        ShowChanges(i, newValue);
+                        Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
                     }
                 }
             }
         }
         catch (Exception e)
         {
-            Debug.Log("Eception from show: " + e);
+            Debug.Log("Exception from show: " + e);
         }
     }
 
-    public void ShowChanges(int i, Tuple<string, string, string, string, string> value)
+    public void ShowChanges(int i, Tuple<string, string, string, string, string, string> value)
     {
         if (i == 0)
         {
-            SceneChangerScript.gyro1.GetComponent<Text>().text = value.Item2;
-            SceneChangerScript.proxy1.GetComponent<Text>().text = value.Item3;
-            SceneChangerScript.light1.GetComponent<Text>().text = value.Item4;
-            SceneChangerScript.magnetic1.GetComponent<Text>().text = value.Item5;
+            SceneChangerScript.battery1.GetComponent<Text>().text = value.Item2;
+            SceneChangerScript.light1.GetComponent<Text>().text = value.Item3;
+            SceneChangerScript.humidity1.GetComponent<Text>().text = value.Item4;
+            SceneChangerScript.temperature1.GetComponent<Text>().text = value.Item5;
+            SceneChangerScript.gyro1.GetComponent<Text>().text = value.Item6;
         }
         else if (i == 1)
         {
-            SceneChangerScript.gyro2.GetComponent<Text>().text = value.Item2;
-            SceneChangerScript.proxy2.GetComponent<Text>().text = value.Item3;
-            SceneChangerScript.light2.GetComponent<Text>().text = value.Item4;
-            SceneChangerScript.magnetic2.GetComponent<Text>().text = value.Item5;
+            SceneChangerScript.battery2.GetComponent<Text>().text = value.Item2;
+            SceneChangerScript.light2.GetComponent<Text>().text = value.Item3;
+            SceneChangerScript.humidity2.GetComponent<Text>().text = value.Item4;
+            SceneChangerScript.temperature2.GetComponent<Text>().text = value.Item5;
+            SceneChangerScript.gyro2.GetComponent<Text>().text = value.Item6;
         }
     }
 }
