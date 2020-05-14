@@ -4,6 +4,7 @@ ScriptsOnlyBuild:
     - ClientScript
     - SceneChangerScript
     - Sensors
+    - TCPServerScript
     Unity.2D.Animation.Editor.dll:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.Tilemap.Editor.dll:
@@ -32,7 +33,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.InputField
     - UnityEngine.UI.Text
   sceneClasses:
-    Assets/Scenes/Client.unity:
+    Assets/Scenes/Application.unity:
     - Class: 1
       Script: {instanceID: 0}
     - Class: 4
@@ -69,6 +70,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 13584}
     - Class: 114
       Script: {instanceID: 14128}
+    - Class: 114
+      Script: {instanceID: 14198}
     - Class: 114
       Script: {instanceID: 14830}
     - Class: 115
@@ -318,13 +321,13 @@ ScriptsOnlyBuild:
     className: InputSystemUIInputModule
   - hash:
       serializedVersion: 2
-      Hash: 2c924cb2d8e8621fde0e466c5aa3dc11
+      Hash: 33ba54042aa87fa5da20e19d4337bddf
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Sensors
   - hash:
       serializedVersion: 2
-      Hash: eefa34189611f4e862996e4379993a59
+      Hash: cb9b1bc1aa202516667767af54fffe07
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SceneChangerScript
@@ -498,7 +501,7 @@ ScriptsOnlyBuild:
     className: DownloadableSample
   - hash:
       serializedVersion: 2
-      Hash: dc267024d7d4539e1be699c6f9199796
+      Hash: 71beacbcd68ac1efbfa042a188ab6e7c
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ClientScript
@@ -762,5 +765,5 @@ ScriptsOnlyBuild:
     className: PlayableTrack
   platform: 13
   scenePathNames:
-  - Assets/Scenes/Client.unity
+  - Assets/Scenes/Application.unity
   playerPath: J:/Janitorrun/PhoneApp/PhoneAPP.apk

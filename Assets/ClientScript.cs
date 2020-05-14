@@ -12,7 +12,6 @@ public class ClientScript : MonoBehaviour
 {
     [SerializeField]
     public int port = 5005;
-    public string ownIp;
     public string serverIp;
 
     public bool isConnected = false;
@@ -76,7 +75,6 @@ public class ClientScript : MonoBehaviour
             Thread.Sleep(1);
         }
         Debug.Log("Connection to The server Established!");
-        Thread.CurrentThread.Abort();
     }
 
     public void ClientSend(System.Object obj)
@@ -92,12 +90,10 @@ public class ClientScript : MonoBehaviour
                 if (toSendQueue.Count > 0)
                 {
                     Debug.Log("TosendObject: " + toSendQueue[0]);
-                    string toSendString = toSendQueue[0];
-                    string message = ownIp + ":" + toSendString;
-                    Byte[] data = Encoding.ASCII.GetBytes(message);
+                    Byte[] data = Encoding.ASCII.GetBytes(toSendQueue[0]);
                     // Send the message to the connected TcpServer. 
                     stream.Write(data, 0, data.Length);
-                    Debug.Log("Sent: " + message);
+                    Debug.Log("Sent: " + toSendQueue[0]);
                     toSendQueue.RemoveAt(0);
                 }
             }
@@ -130,9 +126,6 @@ public class ClientScript : MonoBehaviour
 
     public void OpenConnection()
     {
-        IPAddress localAddr = IPAddress.Parse(GetLocalIPAddress());
-        ownIp = localAddr.ToString();
-
         Thread clientThread = new Thread(() => ConnectToHost());
         clientThread.Start();
         Debug.Log("Program Started...!");

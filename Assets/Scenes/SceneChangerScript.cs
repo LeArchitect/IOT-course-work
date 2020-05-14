@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class SceneChangerScript : MonoBehaviour
@@ -10,10 +11,10 @@ public class SceneChangerScript : MonoBehaviour
     public static string state = null;
     public bool isServer;
 
-    private GameObject menu;
-    private GameObject clientConnect;
-    private GameObject client;
-    private GameObject server;
+    public GameObject menu;
+    public GameObject clientConnect;
+    public GameObject client;
+    public GameObject server;
 
     public static GameObject description;
     public static GameObject dataText0;
@@ -30,6 +31,16 @@ public class SceneChangerScript : MonoBehaviour
     public static GameObject humidity2;
     public static GameObject temperature2;
     public static GameObject gyro2;
+
+    public GameObject descriptiont;
+    public GameObject dataText0t;
+    public GameObject dataText1t;
+    public GameObject battery1t;
+    public GameObject light1t;
+    public GameObject humidity1t;
+    public GameObject temperature1t;
+    public GameObject gyro1t;
+
 
     // Start is called before the first frame update
     void Start()
@@ -60,11 +71,13 @@ public class SceneChangerScript : MonoBehaviour
             dataText1 = description.transform.Find("DataText1").gameObject;
 
             battery1 = dataText0.transform.Find("Battery").gameObject;
-            battery2 = dataText1.transform.Find("Proxy").gameObject;
+            battery2 = dataText1.transform.Find("Battery").gameObject;
             light1 = dataText0.transform.Find("Light").gameObject;
             light2 = dataText1.transform.Find("Light").gameObject;
             humidity1 = dataText0.transform.Find("Humidity").gameObject;
             humidity2 = dataText1.transform.Find("Humidity").gameObject;
+            temperature1 = dataText0.transform.Find("Temperature").gameObject;
+            temperature2 = dataText1.transform.Find("Temperature").gameObject;
             gyro1 = dataText0.transform.Find("Gyro").gameObject;
             gyro2 = dataText1.transform.Find("Gyro").gameObject;
         }

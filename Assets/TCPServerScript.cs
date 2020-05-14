@@ -99,7 +99,7 @@ public class TCPServerScript : MonoBehaviour
         client.NoDelay = false;
 
         string data = null;
-        Byte[] bytes = new Byte[64];
+        Byte[] bytes = new Byte[32];
         int i;
 
         //Thread sendThread = new Thread(() => SendThread(client, stream));
@@ -115,11 +115,10 @@ public class TCPServerScript : MonoBehaviour
         {
             try
             {
+                bytes = new Byte[32];
                 string hex = BitConverter.ToString(bytes);
-                data = Encoding.ASCII.GetString(bytes, 0, i);
-
-                DataHandler(data, client);
-                bytes = new Byte[64];
+                data = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+                messageQueue.Add(data);
             }
             catch (SocketException e)
             {
@@ -212,42 +211,42 @@ public class TCPServerScript : MonoBehaviour
             int i;
             for (i = 0; i <= valueList.Count - 1; i++)
             {
-                Debug.Log("ValueList: " + valueList[0].Item1 + " " + valueList[0].Item2 + " " + valueList[0].Item3 + " " + valueList[0].Item4 + " " + valueList[0].Item5 + " " + valueList[0].Item6);
                 if (valueList[i].Item1 == message[0])
                 {
                     if (message[1] == "B")
                     {
                         Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, message[2], valueList[i].Item3, valueList[i].Item4, valueList[i].Item5, valueList[0].Item6);
-                        valueList.Insert(i, newValue);
-                        ShowChanges(i, newValue);
+                        //valueList[valueList.FindIndex(ind => ind.Item1.Equals(newValue.Item1))] = newValue;
+                        valueList[i] = newValue;
+                        ShowChanges(i, valueList[i]);
                         Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
                     }
                     else if (message[1] == "L")
                     {
                         Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, message[2], valueList[i].Item4, valueList[i].Item5, valueList[0].Item6);
-                        valueList.Insert(i, newValue);
-                        ShowChanges(i, newValue);
+                        valueList[i] = newValue;
+                        ShowChanges(i, valueList[i]);
                         Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
                     }
                     else if (message[1] == "H")
                     {
                         Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, valueList[i].Item3, message[2], valueList[i].Item5, valueList[0].Item6);
-                        valueList.Insert(i, newValue);
-                        ShowChanges(i, newValue);
+                        valueList[i] = newValue;
+                        ShowChanges(i, valueList[i]);
                         Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
                     }
                     else if (message[1] == "T")
                     {
                         Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, valueList[i].Item3, valueList[i].Item4, message[2], valueList[0].Item6);
-                        valueList.Insert(i, newValue);
-                        ShowChanges(i, newValue);
+                        valueList[i] = newValue;
+                        ShowChanges(i, valueList[i]);
                         Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
                     }
                     else if (message[1] == "G")
                     {
                         Tuple<string, string, string, string, string, string> newValue = new Tuple<string, string, string, string, string, string>(valueList[i].Item1, valueList[i].Item2, valueList[i].Item3, valueList[i].Item4, valueList[i].Item5, message[2]);
-                        valueList.Insert(i, newValue);
-                        ShowChanges(i, newValue);
+                        valueList[i] = newValue;
+                        ShowChanges(i, valueList[i]);
                         Debug.Log("NewValue: " + valueList[i].Item1 + " " + valueList[i].Item2 + " " + valueList[i].Item3 + " " + valueList[i].Item4 + " " + valueList[i].Item5 + " " + valueList[0].Item6);
                     }
                 }

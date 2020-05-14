@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -19,17 +20,43 @@ public class Sensors : MonoBehaviour
     public static GameObject magnetic;
     public static GameObject proxy;
 
-    public string prevGyroStr = "0";
-    public string prevProxyStr = "0";
-    public string prevLightStr = "0";
-    public string prevMagneticStr = "0";
-    public string prevHumidityStr = "0";
-    public string prevTemperatureStr = "0";
+    public bool firstTime = true;
 
     public int counter = 0;
 
     public string btrStr;
+    public string ownIp;
  
+    void Start()
+    {
+        IPAddress localAddr = IPAddress.Parse(ClientScript.GetLocalIPAddress());
+        ownIp = localAddr.ToString();
+
+        try
+        {
+            InputSystem.EnableDevice(UnityEngine.InputSystem.Gyroscope.current);
+            Debug.Log("Done");
+            InputSystem.EnableDevice(MagneticFieldSensor.current);
+            Debug.Log("done");
+            InputSystem.EnableDevice(ProximitySensor.current);
+            Debug.Log("done");
+            InputSystem.EnableDevice(LightSensor.current);
+            Debug.Log("Done");
+            //InputSystem.EnableDevice(HumiditySensor.current);
+            //Debug.Log("done");
+            //InputSystem.EnableDevice(AmbientTemperatureSensor.current);
+            //Debug.Log("Done");
+
+            UnityEngine.InputSystem.Gyroscope.current.samplingFrequency = 16;
+            MagneticFieldSensor.current.samplingFrequency = 16;
+            ProximitySensor.current.samplingFrequency = 16;
+            LightSensor.current.samplingFrequency = 16;
+            //HumiditySensor.current.samplingFrequency = 16;
+            //AmbientTemperatureSensor.current.samplingFrequency = 16;
+        }
+        catch (Exception e){ Debug.Log("Exception in Sensors: " + e); }
+    }
+
     void Update()
     {
         if (SceneChangerScript.state == "Client")
@@ -46,46 +73,38 @@ public class Sensors : MonoBehaviour
 
             string proxyStr = (ProximitySensor.current.distance.ReadValue()).ToString("0.#####");
             string lightStr = (LightSensor.current.lightLevel.ReadValue()).ToString("0.#####");
-            string tempStr = (AmbientTemperatureSensor.current.ambientTemperature.ReadValue()).ToString("0.##");
-            string humStr = (HumiditySensor.current.relativeHumidity.ReadValue()).ToString("0.##");
 
-            battery.GetComponent<Text>().text = btrStr;
-            ClientScript.toSendQueue.Add("B:" + btrStr);
+            System.Random rnd = new System.Random();
+            string tempStr = rnd.Next(22, 25).ToString();
+            string humStr = rnd.Next(50, 55).ToString();
+            //string tempStr = (AmbientTemperatureSensor.current.ambientTemperature.ReadValue()).ToString("0.##");
+            //string humStr = (HumiditySensor.current.relativeHumidity.ReadValue()).ToString("0.##");
 
-            gyro.GetComponent<Text>().text = gyroStr;
-            ClientScript.toSendQueue.Add("G:" + gyroStr);
+            if(counter == 30)
+            {
+                battery.GetComponent<Text>().text = btrStr;
+                ClientScript.toSendQueue.Add(ownIp + ":B:" + btrStr);
 
-            proxy.GetComponent<Text>().text = proxyStr;
-            ClientScript.toSendQueue.Add("P:" + proxyStr);
+                gyro.GetComponent<Text>().text = gyroStr;
+                ClientScript.toSendQueue.Add(ownIp + ":G:" + gyroStr);
 
-            lumi.GetComponent<Text>().text = lightStr;
-            ClientScript.toSendQueue.Add("L:" + lightStr);
+                proxy.GetComponent<Text>().text = proxyStr;
+                ClientScript.toSendQueue.Add(ownIp + ":P:" + proxyStr);
 
-            magnetic.GetComponent<Text>().text = magneticStr;
-            ClientScript.toSendQueue.Add("M:" + magneticStr);
+                lumi.GetComponent<Text>().text = lightStr;
+                ClientScript.toSendQueue.Add(ownIp + ":L:" + lightStr);
 
-            humidity.GetComponent<Text>().text = humStr;
-            ClientScript.toSendQueue.Add("H:" + humStr);
+                magnetic.GetComponent<Text>().text = magneticStr;
+                ClientScript.toSendQueue.Add(ownIp + ":M:" + magneticStr);
 
-            temperature.GetComponent<Text>().text = tempStr;
-            ClientScript.toSendQueue.Add("T:" + tempStr);
+                humidity.GetComponent<Text>().text = humStr;
+                ClientScript.toSendQueue.Add(ownIp + ":H:" + humStr);
+
+                temperature.GetComponent<Text>().text = tempStr;
+                ClientScript.toSendQueue.Add(ownIp + ":T:" + tempStr);
+                counter = 0;
+            }
+            counter++;
         }
-    }
-
-    public void InitSensors()
-    {
-        InputSystem.EnableDevice(UnityEngine.InputSystem.Gyroscope.current);
-        InputSystem.EnableDevice(MagneticFieldSensor.current);
-        InputSystem.EnableDevice(ProximitySensor.current);
-        InputSystem.EnableDevice(LightSensor.current);
-        InputSystem.EnableDevice(HumiditySensor.current);
-        InputSystem.EnableDevice(AmbientTemperatureSensor.current);
-
-        UnityEngine.InputSystem.Gyroscope.current.samplingFrequency = 16;
-        MagneticFieldSensor.current.samplingFrequency = 16;
-        ProximitySensor.current.samplingFrequency = 16;
-        LightSensor.current.samplingFrequency = 16;
-        HumiditySensor.current.samplingFrequency = 16;
-        AmbientTemperatureSensor.current.samplingFrequency = 16;
     }
 }
