@@ -69,41 +69,101 @@ public class Sensors : MonoBehaviour
 
         if (SceneChangerScript.state == "Client" && firstTime == false && ClientScript.isConnected == true)
         {
-            btrStr = (SystemInfo.batteryLevel * 100).ToString();
-            battery.GetComponent<Text>().text = btrStr;
-            ClientScript.toSendQueue.Add(ownIp + ":B:" + btrStr);
+            if(counter == 10)
+            {
+                bool extra = false;
+                btrStr = (SystemInfo.batteryLevel * 100).ToString();
+                battery.GetComponent<Text>().text = btrStr;
+                if (ownIp.Length == 12)
+                    extra = true;
 
-            //magneticStr = Math.Pow(Math.Pow(MagneticFieldSensor.current.magneticField.x.ReadValue(), 2) + Math.Pow(MagneticFieldSensor.current.magneticField.y.ReadValue(), 2) + Math.Pow(MagneticFieldSensor.current.magneticField.z.ReadValue(), 2), 0.5f).ToString("0.#") + " ";
-            //magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.y.ReadValue()).ToString("0.#####") + " ";
-            //magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.z.ReadValue()).ToString("0.#####") + " ";
+                if (btrStr.Length == 1)
+                {
+                    if (extra == true)
+                        btrStr = "00" + btrStr;
+                    else
+                        btrStr = "000" + btrStr;
+                }
+                else if (btrStr.Length == 2)
+                {
+                    if (extra == true)
+                        btrStr = "0" + btrStr;
+                    else
+                        btrStr = "00" + btrStr;
+                }
+                else if (btrStr.Length == 3)
+                {
+                    if (extra == true)
+                        btrStr = btrStr;
+                    else
+                        btrStr = "0" + btrStr;
+                }
 
-            gyroStr = Math.Pow(Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.x.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.y.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.z.ReadValue(), 2), 0.5f).ToString("#") + " ";
-            //gyroStr = gyroStr + (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.y.ReadValue()).ToString("0.#####") + " ";
-            //gyroStr = gyroStr + (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.z.ReadValue()).ToString("0.#####") + " ";
-            gyro.GetComponent<Text>().text = gyroStr;
-            ClientScript.toSendQueue.Add(ownIp + ":G:" + gyroStr);
+                ClientScript.toSendQueue.Add(ownIp + ":B:" + btrStr);
 
-            //proxyStr = (ProximitySensor.current.distance.ReadValue()).ToString("0.#####");
-            lightStr = (LightSensor.current.lightLevel.ReadValue()).ToString("0.#####");
-            lumi.GetComponent<Text>().text = lightStr;
-            ClientScript.toSendQueue.Add(ownIp + ":L:" + lightStr);
+                //magneticStr = Math.Pow(Math.Pow(MagneticFieldSensor.current.magneticField.x.ReadValue(), 2) + Math.Pow(MagneticFieldSensor.current.magneticField.y.ReadValue(), 2) + Math.Pow(MagneticFieldSensor.current.magneticField.z.ReadValue(), 2), 0.5f).ToString("0.#") + " ";
+                //magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.y.ReadValue()).ToString("0.#####") + " ";
+                //magneticStr = magneticStr + (MagneticFieldSensor.current.magneticField.z.ReadValue()).ToString("0.#####") + " ";
+                if(extra == true)
+                    gyroStr = Math.Pow(Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.x.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.y.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.z.ReadValue(), 2), 0.5f).ToString("0.#");
+                else
+                    gyroStr = Math.Pow(Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.x.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.y.ReadValue(), 2) + Math.Pow(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.z.ReadValue(), 2), 0.5f).ToString("0.##");
+                //gyroStr = gyroStr + (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.y.ReadValue()).ToString("0.#####") + " ";
+                //gyroStr = gyroStr + (UnityEngine.InputSystem.Gyroscope.current.angularVelocity.z.ReadValue()).ToString("0.#####") + " ";
+                gyro.GetComponent<Text>().text = gyroStr;
+                ClientScript.toSendQueue.Add(ownIp + ":G:" + gyroStr);
 
-            System.Random rnd = new System.Random();
-            tempStr = rnd.Next(22, 25).ToString();
-            temperature.GetComponent<Text>().text = tempStr;
-            ClientScript.toSendQueue.Add(ownIp + ":T:" + tempStr);
+                //proxyStr = (ProximitySensor.current.distance.ReadValue()).ToString("0.#####");
+                lightStr = (LightSensor.current.lightLevel.ReadValue()).ToString();
+                if (lightStr.Length == 1)
+                {
+                    if (extra == true)
+                        lightStr = "00" + lightStr;
+                    else
+                        lightStr = "000" + lightStr;
+                }
+                else if (lightStr.Length == 2)
+                {
+                    if (extra == true)
+                        lightStr = "0" + lightStr;
+                    else
+                        lightStr = "00" + lightStr;
+                }
+                else if (lightStr.Length == 3)
+                {
+                    if (extra == true)
+                        lightStr = lightStr;
+                    else
+                        lightStr = "0" + lightStr;
+                }
+                lumi.GetComponent<Text>().text = lightStr;
+                Debug.Log("This is lightSTR RAW: " + lightStr);
+                ClientScript.toSendQueue.Add(ownIp + ":L:" + lightStr);
 
-            humStr = rnd.Next(50, 55).ToString();
-            humidity.GetComponent<Text>().text = humStr;
-            ClientScript.toSendQueue.Add(ownIp + ":H:" + humStr);
-            //string tempStr = (AmbientTemperatureSensor.current.ambientTemperature.ReadValue()).ToString("0.##");
-            //string humStr = (HumiditySensor.current.relativeHumidity.ReadValue()).ToString("0.##");
+                System.Random rnd = new System.Random();
+                if (extra == true)
+                    tempStr = "0" + rnd.Next(22, 25).ToString();
+                else
+                    tempStr = "00" + rnd.Next(22, 25).ToString();
+                temperature.GetComponent<Text>().text = tempStr;
+                ClientScript.toSendQueue.Add(ownIp + ":T:" + tempStr);
+                if (extra == true)
+                    humStr = "0" + rnd.Next(50, 55).ToString();
+                else
+                    humStr = "00" + rnd.Next(50, 55).ToString();
+                humidity.GetComponent<Text>().text = humStr;
+                ClientScript.toSendQueue.Add(ownIp + ":H:" + humStr);
+                //string tempStr = (AmbientTemperatureSensor.current.ambientTemperature.ReadValue()).ToString("0.##");
+                //string humStr = (HumiditySensor.current.relativeHumidity.ReadValue()).ToString("0.##");
 
-            //proxy.GetComponent<Text>().text = proxyStr;
-            //ClientScript.toSendQueue.Add(ownIp + ":P:" + proxyStr);
+                //proxy.GetComponent<Text>().text = proxyStr;
+                //ClientScript.toSendQueue.Add(ownIp + ":P:" + proxyStr);
 
-            //magnetic.GetComponent<Text>().text = magneticStr;
-            //ClientScript.toSendQueue.Add(ownIp + ":M:" + magneticStr);
+                //magnetic.GetComponent<Text>().text = magneticStr;
+                //ClientScript.toSendQueue.Add(ownIp + ":M:" + magneticStr);
+                counter = 0;
+            }
+            counter++;
         }
     }
 }

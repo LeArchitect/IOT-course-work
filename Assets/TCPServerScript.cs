@@ -37,6 +37,7 @@ public class TCPServerScript : MonoBehaviour
         {
             Debug.Log("MessageQueue size:  " + messageQueue.Count);
             ReadQueue();
+            AverageRead();
         }
     }
 
@@ -99,7 +100,7 @@ public class TCPServerScript : MonoBehaviour
         client.NoDelay = false;
 
         string data = null;
-        Byte[] bytes = new Byte[16];
+        Byte[] bytes = new Byte[18];
         int i;
 
         //Thread sendThread = new Thread(() => SendThread(client, stream));
@@ -119,7 +120,7 @@ public class TCPServerScript : MonoBehaviour
                 data = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
                 Debug.Log(data);
                 messageQueue.Add(data);
-                bytes = new Byte[16];
+                bytes = new Byte[18];
             }
             catch (SocketException e)
             {
@@ -131,58 +132,6 @@ public class TCPServerScript : MonoBehaviour
                 Debug.Log("Exception: " + e);
             }
         }
-    }
-    /*
-    // Thread to handle sending messages to Clients //
-    public void SendThread(System.Object obj, NetworkStream stream)
-    {
-        TcpClient client = (TcpClient)obj;
-
-        while (true)
-        {
-            try
-            {
-                if (client.Connected == false)
-                {
-                    Thread.CurrentThread.Abort();
-                }
-                if (isSending == true)
-                {
-                    SendConfirmed(stream);
-                    isSending = false;
-                }
-                Thread.Sleep(100);
-            }
-            catch (SocketException e)
-            {
-                Debug.Log("SocketException: " + e);
-            }
-        }
-    }
-
-    // Sends the confirmed selection to the client//
-    public void SendConfirmed(NetworkStream stream)
-    {
-        string[] splitter = new string[] { " " };
-        string msg = "TEST";
-
-        Byte[] message = Encoding.ASCII.GetBytes(msg);
-        stream.Write(message, 0, message.Length);
-        Debug.Log(msg);
-    }
-    */
-
-    // Handles the data parsing and extraction //
-    public void DataHandler(string data, TcpClient client)
-    {
-        Debug.Log(data);
-        //ID Sensor data//
-        //string[] splitter = new string[] { ":" };
-        //string[] strings = data.Split(splitter, StringSplitOptions.RemoveEmptyEntries);
-
-        //Tuple<string, string, string> newMessage = new Tuple<string, string, string>(strings[0], strings[1], strings[2]);
-        //Debug.Log("Newmessage: " + strings[0] + " " + strings[1] + " " + strings[2]);
-        messageQueue.Add(data);
     }
 
     // Gets the local ip address
@@ -258,6 +207,36 @@ public class TCPServerScript : MonoBehaviour
         }
     }
 
+    public void AverageRead()
+    {
+        if (valueList.Count == 1)
+        {
+            Tuple<string, string, string, string, string, string> list0 = valueList[0];
+            SceneChangerScript.batteryA.GetComponent<Text>().text = list0.Item2;
+            SceneChangerScript.lightA.GetComponent<Text>().text = list0.Item3;
+            SceneChangerScript.humidityA.GetComponent<Text>().text = list0.Item4;
+            SceneChangerScript.temperatureA.GetComponent<Text>().text = list0.Item5;
+            SceneChangerScript.gyroA.GetComponent<Text>().text = list0.Item6;
+
+        }
+        else if (valueList.Count == 2)
+        {
+            Tuple<string, string, string, string, string, string> list0 = valueList[0];
+            Tuple<string, string, string, string, string, string> list1 = valueList[1];
+            if(list0.Item2 != "N/A" && list1.Item2 != "N/A")
+                SceneChangerScript.batteryA.GetComponent<Text>().text = ((float.Parse(list0.Item2) + float.Parse(list1.Item2))/2).ToString();
+            if (list0.Item3 != "N/A" && list1.Item3 != "N/A")
+                SceneChangerScript.lightA.GetComponent<Text>().text = ((float.Parse(list0.Item3) + float.Parse(list1.Item3)) / 2).ToString();
+            if (list0.Item4 != "N/A" && list1.Item4 != "N/A")
+                SceneChangerScript.humidityA.GetComponent<Text>().text = ((float.Parse(list0.Item4) + float.Parse(list1.Item4)) / 2).ToString();
+            if (list0.Item5 != "N/A" && list1.Item5 != "N/A")
+                SceneChangerScript.temperatureA.GetComponent<Text>().text = ((float.Parse(list0.Item5) + float.Parse(list1.Item5)) / 2).ToString();
+            if (list0.Item6 != "N/A" && list1.Item6 != "N/A")
+                SceneChangerScript.gyroA.GetComponent<Text>().text = ((float.Parse(list0.Item6, CultureInfo.InvariantCulture) + float.Parse(list1.Item6, CultureInfo.InvariantCulture)) / 2).ToString();
+        }
+    }
+
+
     public void ShowChanges(int i, Tuple<string, string, string, string, string, string> value)
     {
         if (i == 0)
@@ -277,5 +256,59 @@ public class TCPServerScript : MonoBehaviour
             SceneChangerScript.gyro2.GetComponent<Text>().text = value.Item6;
         }
     }
+
+        /*
+    // Thread to handle sending messages to Clients //
+    public void SendThread(System.Object obj, NetworkStream stream)
+    {
+        TcpClient client = (TcpClient)obj;
+
+        while (true)
+        {
+            try
+            {
+                if (client.Connected == false)
+                {
+                    Thread.CurrentThread.Abort();
+                }
+                if (isSending == true)
+                {
+                    SendConfirmed(stream);
+                    isSending = false;
+                }
+                Thread.Sleep(100);
+            }
+            catch (SocketException e)
+            {
+                Debug.Log("SocketException: " + e);
+            }
+        }
+    }
+
+    // Sends the confirmed selection to the client//
+    public void SendConfirmed(NetworkStream stream)
+    {
+        string[] splitter = new string[] { " " };
+        string msg = "TEST";
+
+        Byte[] message = Encoding.ASCII.GetBytes(msg);
+        stream.Write(message, 0, message.Length);
+        Debug.Log(msg);
+    }
+
+
+    // Handles the data parsing and extraction //
+    public void DataHandler(string data, TcpClient client)
+    {
+        Debug.Log(data);
+        //ID Sensor data//
+        //string[] splitter = new string[] { ":" };
+        //string[] strings = data.Split(splitter, StringSplitOptions.RemoveEmptyEntries);
+
+        //Tuple<string, string, string> newMessage = new Tuple<string, string, string>(strings[0], strings[1], strings[2]);
+        //Debug.Log("Newmessage: " + strings[0] + " " + strings[1] + " " + strings[2]);
+        messageQueue.Add(data);
+    }
+    */
 }
 

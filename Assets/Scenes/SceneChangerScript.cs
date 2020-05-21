@@ -20,6 +20,7 @@ public class SceneChangerScript : MonoBehaviour
     public static GameObject description;
     public static GameObject dataText0;
     public static GameObject dataText1;
+    public static GameObject averageText;
 
     public static GameObject battery1;
     public static GameObject light1;
@@ -32,6 +33,12 @@ public class SceneChangerScript : MonoBehaviour
     public static GameObject humidity2;
     public static GameObject temperature2;
     public static GameObject gyro2;
+
+    public static GameObject batteryA;
+    public static GameObject lightA;
+    public static GameObject humidityA;
+    public static GameObject temperatureA;
+    public static GameObject gyroA;
 
     public GameObject descriptiont;
     public GameObject dataText0t;
@@ -70,17 +77,23 @@ public class SceneChangerScript : MonoBehaviour
             description = GameObject.Find("Server").transform.Find("Description").gameObject;
             dataText0 = description.transform.Find("DataText0").gameObject;
             dataText1 = description.transform.Find("DataText1").gameObject;
+            averageText = description.transform.Find("AverageText").gameObject;
 
             battery1 = dataText0.transform.Find("Battery").gameObject;
             battery2 = dataText1.transform.Find("Battery").gameObject;
+            batteryA = averageText.transform.Find("Battery").gameObject;
             light1 = dataText0.transform.Find("Light").gameObject;
             light2 = dataText1.transform.Find("Light").gameObject;
+            lightA = averageText.transform.Find("Light").gameObject;
             humidity1 = dataText0.transform.Find("Humidity").gameObject;
             humidity2 = dataText1.transform.Find("Humidity").gameObject;
+            humidityA = averageText.transform.Find("Humidity").gameObject;
             temperature1 = dataText0.transform.Find("Temperature").gameObject;
             temperature2 = dataText1.transform.Find("Temperature").gameObject;
+            temperatureA = averageText.transform.Find("Temperature").gameObject;
             gyro1 = dataText0.transform.Find("Gyro").gameObject;
             gyro2 = dataText1.transform.Find("Gyro").gameObject;
+            gyroA = averageText.transform.Find("Gyro").gameObject;
         }
         catch (Exception e){ Debug.Log("Exception in Sensor texts Server: " + e); }
         ToMenu();
